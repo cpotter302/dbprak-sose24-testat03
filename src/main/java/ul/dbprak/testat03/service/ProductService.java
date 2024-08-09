@@ -33,7 +33,7 @@ public class ProductService {
     }
 
     public List<Product> getProductsByPattern(String pattern) {
-        if (pattern.isEmpty()) {
+        if (pattern == null || pattern.isEmpty()) {
             return productRepository.findAll();
         }
         return productRepository.findByPattern(pattern);

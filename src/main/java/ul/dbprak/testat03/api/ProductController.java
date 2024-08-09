@@ -29,7 +29,7 @@ public class ProductController {
     @Operation(summary = "getProducts"
             , description = "Diese Methode soll eine Liste der in der Datenbank enthaltenen Produkte, deren Titel mit dem übergebenen Pattern übereinstimmen, zurückliefern. Beachten Sie, dass im Falle von pattern=null die komplette Liste zurückgeliefert wird. Das Pattern kann SQL-Wildcards enthalten.")
     @GetMapping("")
-    public List<Product> getProducts(@RequestParam String pattern) {
+    public List<Product> getProducts(@RequestParam(required = false) String pattern) {
         return productService.getProductsByPattern(pattern);
     }
 
