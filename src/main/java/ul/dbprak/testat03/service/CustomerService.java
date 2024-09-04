@@ -7,8 +7,8 @@ import ul.dbprak.testat03.repository.ReviewRepository;
 import ul.dbprak.testat03.repository.model.Customer;
 import ul.dbprak.testat03.repository.model.Review;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
@@ -33,6 +33,20 @@ public class CustomerService {
             return Collections.emptyList();
         }
         List<Review> reviews = reviewRepository.findAll();
-        return reviews.stream().filter(r -> r.getRating() < ratingBelow).map(Review::getCustomer).distinct().toList();
+        Map<Customer, List<Review>> reviewsByCustomer = reviews.stream().collect(Collectors.groupingBy(Review::getCustomer));
+
+        Map<Customer, Double> averageRatingsByCustomer = reviewsByCustomer.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .mapToDouble(Review::getRating)
+                                .average()
+                                .orElse(0.0)
+                ));
+
+        return averageRatingsByCustomer.entrySet().stream()
+                .filter(entry -> entry.getValue() < ratingBelow)
+                .map(Map.Entry::getKey)
+                .toList();
     }
 }
